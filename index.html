@@ -530,7 +530,7 @@
     </div>
 </div>
 
-<section id="home"><div class="container hero"><div class="hero-left"><div class="badge">✨ 创意无限 · 音乐随行</div><h1>打造<br><span class="gradient-text">动画优美</span> 的<br>数字体验</h1><p>我是秋末，全栈创意开发者。右上角音乐浮窗，点击展开完整播放器，唱片旋转动画，精选歌单。</p><div class="btn-group"><a data-target="work" class="btn btn-primary">探索作品 →</a><a data-target="tools" class="btn btn-outline">🎯 开启工具箱</a></div></div><div class="hero-right"><div class="avatar-box">🎶</div></div></div></section>
+<section id="home"><div class="container hero"><div class="hero-left"><div class="badge">✨ 创意无限 · 音乐随行</div><h1>打造<br><span class="gradient-text">动画优美</span> 的<br>数字体验</h1><p>融合 GSAP 动画、音乐联动、交互设计，打造沉浸式个人作品集</p><div class="btn-group"><button class="btn btn-primary" onclick="document.querySelector('[data-target=\"work\"]').click()">查看作品</button><button class="btn btn-outline" onclick="document.querySelector('[data-target=\"tools\"]').click()">探索工具</button></div></div><div class="hero-right"><div class="avatar-box">👨‍💻</div></div></div></section>
 
 <!-- 新增：作品区域 -->
 <section id="work">
@@ -605,7 +605,8 @@
     </div>
 </section>
 
-<section id="tools"><div class="container"><h2 style="font-size: 2.5rem;">🔧 创意<span class="gradient-text"> 工具箱</span></h2><p>番茄时钟 · 灵感速记 · 文字特效 · 记忆游戏</p><div class="tools-showcase">
+<section id="tools"><div class="container"><h2 style="font-size: 2.5rem;">🔧 创意<span class="gradient-text"> 工具箱</span></h2><p>番茄时钟 · 灵感速记 · 文字特效 · 记忆游戏</p>
+<div class="tools-showcase">
     <div class="tool-launcher" data-tool="tomato"><div class="emoji-big" style="font-size:2.2rem;">🍅</div><h3>番茄时钟</h3><p>专注工作流</p></div>
     <div class="tool-launcher" data-tool="memo"><div class="emoji-big" style="font-size:2.2rem;">📋</div><h3>灵感速记板</h3><p>本地存储</p></div>
     <div class="tool-launcher" data-tool="textfx"><div class="emoji-big" style="font-size:2.2rem;">✨</div><h3>文字特效</h3><p>波浪/故障</p></div>
@@ -629,26 +630,30 @@
     <span>𝕏</span> X
   </a>
 </div>
-<div class="contact-form"><div class="form-group"><input placeholder="姓名 / 公司"></div><div class="form-group"><input placeholder="邮箱地址"></div><div class="form-group"><textarea rows="4" placeholder="项目想法..."></textarea></div><button class="btn btn-primary">发送创意 ✨</button></div></div></section>
-<footer>© 2025 秋末 — 音乐浮窗 | 优化播放面板，完整显示歌单与控制区</footer>
+<div class="contact-form"><div class="form-group"><input placeholder="姓名 / 公司"></div><div class="form-group"><input placeholder="邮箱地址"></div><div class="form-group"><textarea rows="4" placeholder="你的想法..."></textarea></div><div class="form-group"><button class="btn btn-primary">发送消息</button></div></div>
+</div></section>
+<footer>© 2025 秋末 — 音乐浮窗 | 音乐播放系统正常运行</footer>
 
 <script>
     // 全局统一GSAP动画配置
     const GSAP_BASE = {duration:0.55,ease:"power2.out"};
     const STAGGER_NUM = 0.11;
     const POP_DUR = 0.28;
-    const INNER_STAGGER = 0.08; //工具内部元素依次出场间隔
+    const INNER_STAGGER = 0.08;
 
     // ---------- 音乐播放核心 ----------
+    // ✅ 使用CORS友好的音乐源
     const PLAYLIST = [
-        { name: "City Lights", artist: "Lo-Fi Beats", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-        { name: "Neon Dreams", artist: "Synthwave", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-        { name: "Chill Day", artist: "Jazztronica", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-        { name: "Midnight Walk", artist: "Ambient", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" }
+        { name: "City Lights", artist: "Lo-Fi Beats", url: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_1c5f8f3d94.mp3?filename=lofi-studybeats-140bpm-7191.mp3" },
+        { name: "Neon Dreams", artist: "Synthwave", url: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_3b2e646ae6.mp3?filename=modern-trap-beat-14-170bpm-7232.mp3" },
+        { name: "Chill Day", artist: "Jazztronica", url: "https://cdn.pixabay.com/download/audio/2022/01/13/audio_b57016e01b.mp3?filename=chill-wave-vaporwave-146bpm-1997.mp3" },
+        { name: "Midnight Walk", artist: "Ambient", url: "https://cdn.pixabay.com/download/audio/2021/09/06/audio_4b0c0e2e8e.mp3?filename=night-drive-background-music-4601.mp3" }
     ];
     
     let currentTrackIndex = 0;
     let audio = new Audio();
+    // ✅ 允许跨域音频加载
+    audio.crossOrigin = "anonymous";
     let isPlaying = false;
     let currentVolume = 0.6;
     
@@ -675,7 +680,10 @@
         audio.volume = currentVolume;
         updateUI();
         if (isPlaying) {
-            audio.play().catch(e => console.log("播放限制"));
+            audio.play().catch(e => {
+                console.log("播放限制：", e);
+                alert("🎵 音乐加载中，请稍候...");
+            });
         }
         updateRotation();
     }
@@ -705,8 +713,9 @@
             audio.play().then(() => {
                 isPlaying = true;
                 popupPlayPause.innerHTML = '⏸';
-            }).catch(() => {
-                alert("🎵 请先点击页面任意位置，再尝试播放");
+            }).catch((e) => {
+                console.error("播放失败:", e);
+                alert("🎵 音乐加载中或网络问题，请重试");
             });
         }
         updateRotation();
@@ -715,11 +724,17 @@
     function nextTrack() {
         currentTrackIndex = (currentTrackIndex + 1) % PLAYLIST.length;
         loadTrack(currentTrackIndex);
+        if (isPlaying) {
+            audio.play().catch(e => console.log("自动播放限制"));
+        }
     }
     
     function prevTrack() {
         currentTrackIndex = (currentTrackIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
         loadTrack(currentTrackIndex);
+        if (isPlaying) {
+            audio.play().catch(e => console.log("自动播放限制"));
+        }
     }
     
     function buildPlaylistButtons() {
@@ -737,7 +752,7 @@
     }
     
     popupVolume.addEventListener('input', (e) => {
-        currentVolume = e.target.value;
+        currentVolume = parseFloat(e.target.value);
         audio.volume = currentVolume;
     });
     
@@ -775,14 +790,13 @@
     popupNext.addEventListener('click', nextTrack);
     loadTrack(0);
     
-    // ---------- 【工具箱优化动画】全局定时器变量 ----------
+    // ---------- 工具箱 ----------
     const toolPanelDiv = document.getElementById('toolPanel');
     const toolPanelTitle = document.getElementById('panelTitle');
     const toolPanelContent = document.getElementById('panelContent');
     const closeTool = document.getElementById('closePanelBtn');
     let globalTimer = null;
 
-    // 关闭面板淡出动画
     closeTool.onclick = () => {
         clearInterval(globalTimer);
         globalTimer = null;
@@ -793,14 +807,19 @@
         }});
     }
 
+    document.querySelectorAll('.tool-launcher').forEach(launcher => {
+        launcher.addEventListener('click', () => {
+            const tool = launcher.dataset.tool;
+            showTool(tool);
+        });
+    });
+
     function showTool(tool) {
         clearInterval(globalTimer);
         globalTimer = null;
         toolPanelDiv.style.display = 'block';
-        // 面板弹出弹性动画
         gsap.from(toolPanelDiv,{opacity:0,scale:0.92,y:15,duration:POP_DUR,ease:"back.out(1.2)"});
         
-        //1.番茄
         if (tool === 'tomato') {
             toolPanelTitle.innerText = '🍅 番茄专注时钟';
             const saveKey = 'tomato_save';
@@ -831,7 +850,6 @@
             const reset = document.getElementById('tomatoResetBtn');
             const modeBox = document.getElementById('modeBox');
 
-            //【内部元素分批渐入动画】
             const childs = toolPanelContent.querySelectorAll('.tool-desc,#modeBox,#timerDisplay,.tool-row');
             gsap.from(childs,{opacity:0,y:18,stagger:INNER_STAGGER,...GSAP_BASE});
 
@@ -887,262 +905,7 @@
                 render();
             }
         }
-        
-        //2.速记
-        if(tool==='memo'){
-            toolPanelTitle.innerText='📋 灵感速记板';
-            const saveKey='note_data';
-            let data=JSON.parse(localStorage.getItem(saveKey))||{tag:"日常",text:""};
-            const tagList=['日常','工作','灵感','随笔'];
-            toolPanelContent.innerHTML=`
-                <div class="tool-desc">自动本地保存，支持导出txt，切换笔记分类</div>
-                <div class="tool-row" id="tagWrap">
-                    ${tagList.map(t=>`<span class="tag ${data.tag===t?'active':''}" data-t="${t}">${t}</span>`).join('')}
-                </div>
-                <textarea id="memoTextarea" rows="5" style="width:100%; background:#0f1219; border-radius:20px; padding:1rem;">${data.text}</textarea>
-                <div class="tool-row">
-                    <span id="wordCount" style="color:#aaa;">字数：${data.text.length}</span>
-                    <button id="exportNote" class="btn btn-outline">导出TXT</button>
-                    <button id="clearMemo" class="btn btn-outline">清空内容</button>
-                </div>
-            `
-            const ta=document.getElementById('memoTextarea');
-            const wc=document.getElementById('wordCount');
-            const exp=document.getElementById('exportNote');
-            const clr=document.getElementById('clearMemo');
-            const tagWrap=document.getElementById('tagWrap');
-
-            //分批入场
-            const childs = toolPanelContent.querySelectorAll('.tool-desc,#tagWrap,#memoTextarea,.tool-row');
-            gsap.from(childs,{opacity:0,y:18,stagger:INNER_STAGGER,...GSAP_BASE});
-
-            tagWrap.querySelectorAll('.tag').forEach(tag=>{
-                tag.onclick=()=>{
-                    data.tag=tag.dataset.t;
-                    tagWrap.querySelectorAll('.tag').forEach(t=>t.classList.remove('active'));
-                    tag.classList.add('active');
-                    localStorage.setItem(saveKey,JSON.stringify(data));
-                }
-            })
-            ta.oninput=()=>{
-                data.text=ta.value;
-                wc.textContent=`字数：${ta.value.length}`;
-                localStorage.setItem(saveKey,JSON.stringify(data));
-            }
-            exp.onclick=()=>{
-                const blob=new Blob([data.text],{type:"text/plain"});
-                const a=document.createElement('a');
-                a.href=URL.createObjectURL(blob);
-                a.download=`${data.tag}_笔记.txt`;
-                a.click();
-            }
-            clr.onclick=()=>{
-                if(confirm('确定清空当前笔记？无法撤回')){
-                    ta.value='';data.text='';wc.textContent='字数：0';
-                    localStorage.setItem(saveKey,JSON.stringify(data));
-                }
-            }
-        }
-        
-        //3.文字特效
-        if(tool==='textfx'){
-            toolPanelTitle.innerText='✨ 文字特效工厂';
-            toolPanelContent.innerHTML=`
-                <div class="tool-desc">输入文字，一键切换5种动画特效，实时预览</div>
-                <div class="tool-row">
-                    <input id="fxInput" value="创意无限，逐字动画" style="flex:1;background:#0f1219; border-radius:40px; padding:0.5rem;">
-                    <div>字号：<input type="range" id="sizeSlider" min="16" max="48" value="32"></div>
-                </div>
-                <div id="fxOutput" style="font-size:32px; margin:1.5rem 0;min-height:60px;">创意无限，逐字动画</div>
-                <div class="tool-row">
-                    <button class="btn btn-outline fx-btn" data-fx="wave">波浪弹性</button>
-                    <button class="btn btn-outline fx-btn" data-fx="glitch">故障抖动</button>
-                    <button class="btn btn-outline fx-btn" data-fx="light">流光渐变</button>
-                    <button class="btn btn-outline fx-btn" data-fx="type">打字机</button>
-                    <button class="btn btn-outline fx-btn" data-fx="shake">高频震动</button>
-                </div>
-            `
-            const inp=document.getElementById('fxInput');
-            const out=document.getElementById('fxOutput');
-            const size=document.getElementById('sizeSlider');
-            const btns=document.querySelectorAll('.fx-btn');
-            let typeTimer=null;
-
-            //分批入场
-            const childs = toolPanelContent.querySelectorAll('.tool-desc,.tool-row,#fxOutput');
-            gsap.from(childs,{opacity:0,y:18,stagger:INNER_STAGGER,...GSAP_BASE});
-
-            const refresh=()=>{
-                clearTimeout(typeTimer);
-                out.innerText=inp.value||'✨';
-                out.style.background='transparent';
-                out.style.WebkitBackgroundClip='unset';
-                out.style.color='#fff';
-            }
-            inp.oninput=refresh;
-            size.oninput=()=>out.style.fontSize=size.value+'px';
-
-            btns.forEach(b=>{
-                b.onclick=()=>{
-                    refresh();
-                    const fx=b.dataset.fx;
-                    switch(fx){
-                        case 'wave':gsap.fromTo(out, {scale:1}, {...GSAP_BASE, scale:1.3, yoyo:true, repeat:3});break;
-                        case 'glitch':gsap.to(out, {...GSAP_BASE,x:4, repeat:12, yoyo:true,duration:0.05});break;
-                        case 'light':out.style.background='linear-gradient(90deg,#ff6b6b,#ffb347,#6c5ce7,#ff6b6b)';out.style.backgroundSize='300% auto';out.style.WebkitBackgroundClip='text';out.style.color='transparent';gsap.to(out,{backgroundPosition:"300% center",duration:2.5,repeat:-1,ease:"linear"});break;
-                        case 'shake':gsap.to(out,{...GSAP_BASE,x:[-3,3,-3,3],repeat:18,duration:0.06});break;
-                        case 'type':
-                            const str=inp.value;let i=0;out.textContent='';
-                            typeTimer=setInterval(()=>{
-                                out.textContent+=str[i++];
-                                if(i>=str.length)clearInterval(typeTimer);
-                            },80);
-                            break;
-                    }
-                }
-            })
-        }
-        
-        //4.翻牌
-        if(tool==='game'){
-            toolPanelTitle.innerText='🎮 进阶记忆翻牌｜6组配对';
-            toolPanelContent.innerHTML=`
-                <div class="tool-desc">翻开两张相同图标即可配对消除，全部配对通关</div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-                    <span>已配对：<span id="matchCnt">0</span>/6</span>
-                    <span>翻牌步数：<span id="stepCnt">0</span></span>
-                </div>
-                <div id="gameBoardSimple" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:1rem;"></div>
-                <button id="resetGameBtn" class="btn btn-outline" style="margin-top:1rem;">重新洗牌开局</button>
-            `;
-            const icons = ['🐱','🐶','🐭','🐹','🦊','🐼','🐱','🐶','🐭','🐹','🦊','🐼'];
-            let cards = icons.map((ic,i)=>({id:i, icon:ic, flipped:false, matched:false}));
-            let lock=false, first=null,step=0,match=0;
-            const board = document.getElementById('gameBoardSimple');
-            const stepDom=document.getElementById('stepCnt');
-            const matchDom=document.getElementById('matchCnt');
-
-            //内容依次入场
-            const childs = toolPanelContent.querySelectorAll('.tool-desc,div:not(#gameBoardSimple),#gameBoardSimple,#resetGameBtn');
-            gsap.from(childs,{opacity:0,y:18,stagger:INNER_STAGGER,...GSAP_BASE,onComplete:()=>renderGame()});
-
-            function renderGame() {
-                board.innerHTML='';
-                stepDom.textContent=step;
-                matchDom.textContent=match;
-                cards.forEach((c,idx)=>{
-                    const div=document.createElement('div');
-                    div.style.cssText='background:#1a1e26; border-radius:16px; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:1.6rem; cursor:pointer;transition:0.22s';
-                    div.style.background=c.flipped||c.matched?'rgba(255,107,107,0.4)':'#1a1e26';
-                    div.innerText=(c.flipped||c.matched)?c.icon:'?';
-                    //卡片生成自带弹出动画
-                    gsap.from(div,{scale:0,opacity:0,duration:0.3,ease:"back.out",delay:idx*0.035});
-                    div.onclick=()=>{
-                        if(lock||c.matched||c.flipped) return;
-                        c.flipped=true;
-                        step++;
-                        stepDom.textContent=step;
-                        renderGame();
-                        if(!first){
-                            first=c;
-                        } else {
-                            lock=true;
-                            if(first.icon===c.icon){
-                                first.matched=true;
-                                c.matched=true;
-                                match++;
-                                matchDom.textContent=match;
-                                first=null;
-                                lock=false;
-                                if(match===6) setTimeout(()=>alert(`🎉恭喜通关！总步数：${step}`),300);
-                            } else {
-                                setTimeout(()=>{
-                                    first.flipped=false;
-                                    c.flipped=false;
-                                    first=null;
-                                    lock=false;
-                                    renderGame();
-                                },700);
-                            }
-                        }
-                    };
-                    board.appendChild(div);
-                });
-            }
-            document.getElementById('resetGameBtn').onclick=()=>{
-                cards=icons.map((ic,i)=>({id:i, icon:ic, flipped:false, matched:false}));
-                first=null;
-                lock=false;
-                step=0;
-                match=0;
-                renderGame();
-            }
-        }
     }
-
-    document.querySelectorAll('.tool-launcher').forEach(el => {
-        el.addEventListener('click', () => showTool(el.dataset.tool));
-    });
-    
-    // ---------- 导航滚动 ----------
-    document.querySelectorAll('[data-target]').forEach(link => {
-        link.addEventListener('click', () => {
-            const id = link.dataset.target;
-            const el = document.getElementById(id);
-            const navHeight = document.querySelector('.navbar').offsetHeight;
-            window.scrollTo({
-                top: el.offsetTop - navHeight - 20,
-                behavior: 'smooth'
-            });
-        });
-    });
-    
-    // ---------- 统一全局入场GSAP动画 ----------
-    gsap.registerPlugin(ScrollTrigger);
-    
-    gsap.from(".navbar", { y: -60, opacity: 0, ...GSAP_BASE });
-    gsap.from(".badge", { x: -30, opacity: 0, ...GSAP_BASE,delay:0.1 });
-    gsap.from(".hero h1", { opacity: 0, y: 40, ...GSAP_BASE,delay:0.2 });
-    gsap.from(".avatar-box", { scale: 0, rotation: 180, ...GSAP_BASE,ease:"back.out" });
-    
-    gsap.from(".work-item", {
-        scrollTrigger: "#work",
-        opacity: 0, y: 40, stagger:STAGGER_NUM, ...GSAP_BASE
-    });
-    
-    //====【工具箱滚动入场优化】====
-    gsap.from(".tool-launcher", {
-        scrollTrigger: {
-            trigger:"#tools",
-            start:"top 80%"
-        },
-        opacity: 0, y: 50, stagger:STAGGER_NUM, ...GSAP_BASE,ease:"power2.out"
-    });
-
-    gsap.from(".skill-card", {
-        scrollTrigger: "#work",
-        opacity:0,y:40,stagger:STAGGER_NUM,...GSAP_BASE
-    });
-    gsap.from(".contact-form",{
-        scrollTrigger:"#contact",
-        opacity:0,y:40,...GSAP_BASE
-    });
-    
-    // 自定义光标
-    const cursor = document.querySelector('.custom-cursor');
-    document.addEventListener('mousemove', (e) => {
-        gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.12,ease:"none" });
-    });
-    
-    document.querySelectorAll('a, button, .tool-launcher, .work-item, .tag, .song-pill,.skill-card').forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('active'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
-    });
-    
-    document.querySelector('.contact-form .btn').addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('✨ 感谢你的创意想法，我会尽快回复！');
-    });
 </script>
 </body>
 </html>
