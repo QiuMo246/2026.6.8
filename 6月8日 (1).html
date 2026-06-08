@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>秋末 | 创意开发者 · 音乐随行</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0c10;
+            color: #eef2ff;
+            overflow-x: hidden;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        /* 自定义光标 */
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff6b6b;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease, background 0.2s;
+            transform: translate(-50%, -50%);
+        }
+        .custom-cursor.active {
+            transform: translate(-50%, -50%) scale(1.8);
+            background: rgba(255, 107, 107, 0.3);
+            border-color: #ff9f4a;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 12, 16, 0.6);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .nav-links { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .nav-links a {
+            color: #eef2ff;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 500;
+            transition: all 0.22s ease;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .nav-links a:hover { color: #ff6b6b; transform: translateY(-3px); }
+        .tool-badge {
+            background: rgba(255,107,107,0.2);
+            border-radius: 30px;
+            padding: 0.3rem 1rem !important;
+            margin-left: 1.5rem;
+            border: 1px solid rgba(255,107,107,0.3);
+        }
+
+        /* 通用区块 */
+        section {
+            min-height: 100vh;
+            padding: 8rem 5% 5rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            scroll-margin-top: 90px;
+        }
+        .container { max-width: 1300px; margin: 0 auto; width: 100%; }
+
+        /* 首页 */
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 3rem;
+        }
+        .hero-left { flex: 1.2; }
+        .hero-right { flex: 0.9; display: flex; justify-content: center; }
+        .badge {
+            background: rgba(255,107,107,0.15);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            width: fit-content;
+            margin-bottom: 1.5rem;
+            border-left: 3px solid #ff6b6b;
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.8rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #ff6b6b, #ffb347, #6c5ce7);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero p { font-size: 1.2rem; color: #9ca3af; margin: 1.5rem 0 2rem; max-width: 500px; }
+        .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .btn {
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.22s ease, box-shadow 0.22s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ffb347);
+            color: #0a0c10;
+            box-shadow: 0 8px 20px rgba(255,107,107,0.3);
+        }
+        .btn-outline {
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            backdrop-filter: blur(5px);
+            background: transparent;
+        }
+        .btn:hover { transform: translateY(-6px); }
+        .avatar-box {
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle at 30% 20%, rgba(255,107,107,0.2), rgba(108,92,231,0.1));
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            backdrop-filter: blur(2px);
+            border: 2px solid rgba(255,107,107,0.5);
+            animation: morph 10s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+        @keyframes morph {
+            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            50% { border-radius: 50% 50% 30% 70% / 60% 40% 60% 40%; }
+            100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+        }
+
+        /* 作品 & 技能 */
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .work-item {
+            border-radius: 28px;
+            overflow: hidden;
+            background: #11151c;
+            transition: all 0.22s ease;
+            cursor: pointer;
+            border:1px solid transparent;
+        }
+        .work-item:hover { transform: translateY(-6px); border-color:#ff6b6b; }
+        .work-img {
+            height: 220px;
+            background: linear-gradient(145deg, #2a2f3a, #1a1e26);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        .work-info { padding: 1.5rem; }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .skill-card {
+            background: rgba(20,24,30,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 2rem;
+            border: 1px solid transparent;
+            transition: all 0.22s ease;
+        }
+        .skill-card:hover{transform: translateY(-6px);border-color:#ff6b6b;}
+        
+        /* =======【优化后工具箱样式】======= */
+        .tools-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0 2rem;
+        }
+        .tool-launcher {
+            background: rgba(20,24,30,0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: transform 0.22s ease, border-color 0.22s, box-shadow 0.22s;
+        }
+        .tool-launcher:hover {
+            transform: translateY(-8px);
+            border-color: #ff6b6b;
+            box-shadow: 0 10px 30px rgba(255,107,107,0.15);
+        }
+        .tool-launcher h3{margin:8px 0 6px;}
+        .dynamic-panel {
+            margin-top: 2rem;
+            background: rgba(0,0,0,0.35);
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            backdrop-filter: blur(4px);
+        }
+        .close-panel {
+            background: none;
+            border: none;
+            color: #ffb347;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition:0.22s;
+        }
+        .close-panel:hover{transform:scale(1.15);color:#ff6b6b;}
+
+        /* 工具内部通用样式 */
+        .tool-row{margin:14px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+        .tool-desc{color:#aaa;font-size:0.9rem;margin:6px 0 12px;}
+        .tag{padding:4px 10px;border-radius:20px;border:1px solid rgba(255,107,107,0.3);font-size:0.8rem;color:#ffb347;cursor:pointer;transition:0.22s;}
+        .tag.active{background:#ff6b6b;color:#000;border-color:#ffb347;}
+        .tag:hover{transform:scale(1.06);}
+        
+        /* ========= 音乐播放器样式 ========= */
+        .music-mini-player {
+            position: fixed;
+            top: 90px;
+            right: 24px;
+            z-index: 200;
+            background: rgba(20, 24, 40, 0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 8px 18px 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border: 1px solid rgba(255,107,107,0.5);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.22s;
+        }
+        .music-mini-player:hover { transform: scale(1.03); border-color: #ff6b6b; background: rgba(30,34,50,0.95); }
+        .mini-disc {
+            width: 38px;
+            height: 38px;
+            background: radial-gradient(circle at 30% 30%, #ffb347, #ff6b6b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 8px rgba(255,107,107,0.6);
+        }
+        .mini-disc.rotating { animation: spinDisc 3s linear infinite; }
+        @keyframes spinDisc {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .mini-info {
+            font-size: 0.8rem;
+            font-weight: 500;
+            max-width: 110px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .music-popup-panel {
+            position: fixed;
+            top: 145px;
+            right: 24px;
+            width: 380px;
+            max-width: calc(100vw - 48px);
+            background: linear-gradient(145deg, #191f2c, #0c0f16);
+            border-radius: 36px;
+            border: 1px solid rgba(255,107,107,0.6);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+            z-index: 201;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            max-height: 85vh;
+        }
+        .music-popup-panel.open{animation:popOpen 0.28s ease-out;}
+        @keyframes popOpen{from{opacity:0;transform:translateY(-12px) scale(0.96);}to{opacity:1;transform:translateY(0) scale(1);}}
+        .music-popup-header {
+            padding: 1rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,107,107,0.3);
+            background: rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .music-popup-header h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffb347;
+        }
+        .popup-close {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            color: #ffb347;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.22s;
+        }
+        .popup-close:hover { transform: scale(1.1); color: #ff6b6b; }
+        
+        .popup-disc-container {
+            display: flex;
+            justify-content: center;
+            padding: 1.5rem 0 0.8rem;
+            flex-shrink: 0;
+        }
+        .large-disc {
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle at 30% 30%, #ffc085, #ff6b6b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 0 4px rgba(255,107,107,0.3);
+        }
+        .large-disc.rotating { animation: spinDisc 4s linear infinite; }
+        
+        .track-details {
+            text-align: center;
+            margin: 0.8rem 0 0.5rem;
+            flex-shrink: 0;
+        }
+        .track-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+        .track-artist {
+            font-size: 0.8rem;
+            color: #b9c3d4;
+            margin-top: 4px;
+        }
+        
+        .playlist-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.8rem 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin: 0.5rem 0;
+            max-height: 140px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .song-pill {
+            background: rgba(255,107,107,0.2);
+            border: 1px solid rgba(255,107,107,0.4);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.22s;
+            color: #f0f3fa;
+        }
+        .song-pill.active-song {
+            background: #ff6b6b;
+            border-color: #ffb347;
+            color: #0a0c10;
+            font-weight: bold;
+        }
+        .song-pill:hover { background: #ff6b6b; color: #0a0c10; transform: scale(1.05); }
+        
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1rem 0 0.5rem;
+            flex-shrink: 0;
+        }
+        .ctrl-icon {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #ffb347;
+            transition: transform 0.22s;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .ctrl-icon:hover { transform: scale(1.1); color: #ff6b6b; }
+        
+        .volume-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem 1rem 1.2rem;
+            flex-shrink: 0;
+        }
+        .volume-control span { font-size: 0.9rem; }
+        .volume-slider-custom {
+            width: 140px;
+            accent-color: #ff6b6b;
+            background: #2a2f3a;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .music-popup-panel { width: calc(100vw - 24px); right: 12px; top: 130px; }
+            .music-mini-player { right: 12px; top: 80px; }
+            .hero { flex-direction: column-reverse; text-align: center; }
+        }
+        
+        .contact-form { max-width: 600px; margin-top: 2rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        input, textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(20,24,30,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            color: #fff;
+            font-family: inherit;
+            transition:0.22s;
+        }
+        input:focus,textarea:focus{outline:none;border-color:#ff6b6b;}
+        .social-link {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.8rem 1.5rem;
+          background: rgba(255,107,107,0.1);
+          border: 1px solid rgba(255,107,107,0.3);
+          border-radius: 30px;
+          color: #fff;
+          text-decoration: none;
+          transition: all 0.22s ease;
+          font-weight: 500;
+        }
+        .social-link:hover {
+          transform: translateY(-3px);
+          background: rgba(255,107,107,0.2);
+          border-color: #ff6b6b;
+        }
+        footer { text-align: center; padding: 2rem; color: #6c727f; border-top: 1px solid rgba(255,255,255,0.05); }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body>
+<div class="custom-cursor"></div>
+<nav class="navbar">
+    <div class="logo">QIUMO</div>
+    <div class="nav-links">
+        <a data-target="home">首页</a>
+        <a data-target="work">作品</a>
+        <a data-target="tools" class="tool-badge">🧰 工具</a>
+        <a data-target="contact">联系</a>
+    </div>
+</nav>
+
+<!-- 迷你播放器 -->
+<div id="miniPlayer" class="music-mini-player">
+    <div id="miniDisc" class="mini-disc">🎵</div>
+    <div class="mini-info" id="miniTrackName">轻触播放</div>
+</div>
+
+<!-- 完整音乐弹出层 -->
+<div id="musicFullPanel" class="music-popup-panel">
+    <div class="music-popup-header">
+        <h4>🎵 音乐留声机</h4>
+        <button id="closeMusicPanel" class="popup-close">✕</button>
+    </div>
+    <div class="popup-disc-container">
+        <div id="popupDisc" class="large-disc">🎵</div>
+    </div>
+    <div class="track-details">
+        <div class="track-name" id="popupTrackName">City Lights</div>
+        <div class="track-artist" id="popupArtist">Lo-Fi Beats</div>
+    </div>
+    <div class="playlist-grid" id="playlistContainer"></div>
+    <div class="control-buttons">
+        <button id="popupPrevBtn" class="ctrl-icon">⏮</button>
+        <button id="popupPlayPauseBtn" class="ctrl-icon">▶</button>
+        <button id="popupNextBtn" class="ctrl-icon">⏭</button>
+    </div>
+    <div class="volume-control">
+        <span>🔊</span>
+        <input type="range" id="popupVolumeSlider" class="volume-slider-custom" min="0" max="1" step="0.01" value="0.6">
+    </div>
+</div>
+
+<section id="home"><div class="container hero"><div class="hero-left"><div class="badge">✨ 创意无限 · 音乐随行</div><h1>打造<br><span class="gradient-text">动画优美</span> 的<br>数字体验</h1><p>我是秋末，全栈创意开发者。右上角音乐浮窗，点击展开完整播放器，唱片旋转动画，精选歌单。</p><div class="btn-group"><a data-target="work" class="btn btn-primary">探索作品 →</a><a data-target="tools" class="btn btn-outline">🎯 开启工具箱</a></div></div><div class="hero-right"><div class="avatar-box">🎶</div></div></div></section>
+
+<!-- 新增：作品区域 -->
+<section id="work">
+    <div class="container">
+        <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚀 精选<span class="gradient-text"> 作品</span></h2>
+        <p style="color: #9ca3af; font-size: 1.1rem;">融合创意设计与流畅交互，打造沉浸式数字体验</p>
+        
+        <div class="work-grid">
+            <div class="work-item">
+                <div class="work-img">🎨</div>
+                <div class="work-info">
+                    <h3 style="margin-bottom: 0.5rem;">创意视觉官网</h3>
+                    <p style="color: #9ca3af; font-size: 0.9rem;">现代化暗黑风格，渐变动画，响应式布局</p>
+                </div>
+            </div>
+            <div class="work-item">
+                <div class="work-img">🎵</div>
+                <div class="work-info">
+                    <h3 style="margin-bottom: 0.5rem;">音乐播放系统</h3>
+                    <p style="color: #9ca3af; font-size: 0.9rem;">悬浮播放器，唱片旋转，歌单切换，音量控制</p>
+                </div>
+            </div>
+            <div class="work-item">
+                <div class="work-img">⚡</div>
+                <div class="work-info">
+                    <h3 style="margin-bottom: 0.5rem;">效率工具合集</h3>
+                    <p style="color: #9ca3af; font-size: 0.9rem;">番茄时钟、速记、文字特效、记忆游戏一体化</p>
+                </div>
+            </div>
+            <div class="work-item">
+                <div class="work-img">📱</div>
+                <div class="work-info">
+                    <h3 style="margin-bottom: 0.5rem;">移动端交互原型</h3>
+                    <p style="color: #9ca3af; font-size: 0.9rem;">全平台适配，丝滑动画，极简UI设计</p>
+                </div>
+            </div>
+            <div class="work-item">
+                <div class="work-img">🎮</div>
+                <div class="work-info">
+                    <h3 style="margin-bottom: 0.5rem;">轻量互动游戏</h3>
+                    <p style="color: #9ca3af; font-size: 0.9rem;">记忆翻牌、打字机特效、动态文字动画</p>
+                </div>
+            </div>
+            <div class="work-item">
+                <div class="work-img">✨</div>
+                <div class="work-info">
+                    <h3 style="margin-bottom: 0.5rem;">个人作品集</h3>
+                    <p style="color: #9ca3af; font-size: 0.9rem;">GSAP滚动动画，暗黑主题，渐变文字，音乐联动</p>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin: 4rem 0 1.5rem; font-size: 1.8rem;">核心<span class="gradient-text"> 技能</span></h3>
+        <div class="skills-grid">
+            <div class="skill-card">
+                <h3 style="margin-bottom: 0.8rem;">前端开发</h3>
+                <p style="color: #9ca3af;">HTML / CSS / JS / GSAP / 响应式</p>
+            </div>
+            <div class="skill-card">
+                <h3 style="margin-bottom: 0.8rem;">交互设计</h3>
+                <p style="color: #9ca3af;">动效设计 / 视觉美学 / 用户体验</p>
+            </div>
+            <div class="skill-card">
+                <h3 style="margin-bottom: 0.8rem;">创意工具</h3>
+                <p style="color: #9ca3af;">效率工具 / 小游戏 / 文字特效</p>
+            </div>
+            <div class="skill-card">
+                <h3 style="margin-bottom: 0.8rem;">音乐联动</h3>
+                <p style="color: #9ca3af;">音频播放 / 动画同步 / 沉浸式体验</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="tools"><div class="container"><h2 style="font-size: 2.5rem;">🔧 创意<span class="gradient-text"> 工具箱</span></h2><p>番茄时钟 · 灵感速记 · 文字特效 · 记忆游戏</p><div class="tools-showcase">
+    <div class="tool-launcher" data-tool="tomato"><div class="emoji-big" style="font-size:2.2rem;">🍅</div><h3>番茄时钟</h3><p>专注工作流</p></div>
+    <div class="tool-launcher" data-tool="memo"><div class="emoji-big" style="font-size:2.2rem;">📋</div><h3>灵感速记板</h3><p>本地存储</p></div>
+    <div class="tool-launcher" data-tool="textfx"><div class="emoji-big" style="font-size:2.2rem;">✨</div><h3>文字特效</h3><p>波浪/故障</p></div>
+    <div class="tool-launcher" data-tool="game"><div class="emoji-big" style="font-size:2.2rem;">🎮</div><h3>记忆翻牌</h3><p>轻量小游戏</p></div>
+</div>
+<div id="toolPanel" class="dynamic-panel" style="display: none;">
+    <div class="panel-header" style="display:flex; justify-content:space-between;"><span id="panelTitle" style="font-size:1.3rem;font-weight:600;"></span><button id="closePanelBtn" class="close-panel">✕</button></div>
+    <div id="panelContent"></div>
+</div></div></section>
+
+<section id="contact"><div class="container"><h2>让我们<span class="gradient-text"> 一起创造</span></h2>
+<p style="color: #9ca3af; font-size: 1.1rem; margin-bottom: 1.5rem;">也可以在社交媒体上找到我：</p>
+<div class="social-links" style="margin-bottom: 2rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+  <a href="https://www.xiaohongshu.com/user/profile/5cc8f688000000001000ac87" target="_blank" class="social-link">
+    <span>📕</span> 小红书
+  </a>
+  <a href="https://www.douyin.com/user/MS4wLjABAAAAmT34BG5gS93p8BQNPpxFPlVybDfzPA43hf9Cg-5tMzycVYyAmaQeiPdAFB79Mexy?from_tab_name=main" target="_blank" class="social-link">
+    <span>🎵</span> 抖音
+  </a>
+  <a href="https://x.com/QiuMo157440" target="_blank" class="social-link">
+    <span>𝕏</span> X
+  </a>
+</div>
+<div class="contact-form"><div class="form-group"><input placeholder="姓名 / 公司"></div><div class="form-group"><input placeholder="邮箱地址"></div><div class="form-group"><textarea rows="4" placeholder="项目想法..."></textarea></div><button class="btn btn-primary">发送创意 ✨</button></div></div></section>
+<footer>© 2025 秋末 — 音乐浮窗 | 优化播放面板，完整显示歌单与控制区</footer>
+
+<script>
+    // 全局统一GSAP动画配置
+    const GSAP_BASE = {duration:0.55,ease:"power2.out"};
+    const STAGGER_NUM = 0.11;
+    const POP_DUR = 0.28;
+    const INNER_STAGGER = 0.08; //工具内部元素依次出场间隔
+
+    // ---------- 音乐播放核心 ----------
+    const PLAYLIST = [
+        { name: "City Lights", artist: "Lo-Fi Beats", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+        { name: "Neon Dreams", artist: "Synthwave", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+        { name: "Chill Day", artist: "Jazztronica", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+        { name: "Midnight Walk", artist: "Ambient", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" }
+    ];
+    
+    let currentTrackIndex = 0;
+    let audio = new Audio();
+    let isPlaying = false;
+    let currentVolume = 0.6;
+    
+    // DOM 元素
+    const miniPlayer = document.getElementById('miniPlayer');
+    const musicPanel = document.getElementById('musicFullPanel');
+    const miniDisc = document.getElementById('miniDisc');
+    const popupDisc = document.getElementById('popupDisc');
+    const miniTrackName = document.getElementById('miniTrackName');
+    const popupTrackName = document.getElementById('popupTrackName');
+    const popupArtist = document.getElementById('popupArtist');
+    const popupPlayPause = document.getElementById('popupPlayPauseBtn');
+    const popupPrev = document.getElementById('popupPrevBtn');
+    const popupNext = document.getElementById('popupNextBtn');
+    const popupVolume = document.getElementById('popupVolumeSlider');
+    const playlistContainer = document.getElementById('playlistContainer');
+    const closePanelBtn = document.getElementById('closeMusicPanel');
+    
+    function loadTrack(index) {
+        const track = PLAYLIST[index];
+        if (!track) return;
+        audio.pause();
+        audio.src = track.url;
+        audio.volume = currentVolume;
+        updateUI();
+        if (isPlaying) {
+            audio.play().catch(e => console.log("播放限制"));
+        }
+        updateRotation();
+    }
+    
+    function updateUI() {
+        const track = PLAYLIST[currentTrackIndex];
+        if (!track) return;
+        miniTrackName.textContent = track.name;
+        popupTrackName.textContent = track.name;
+        popupArtist.textContent = track.artist;
+        document.querySelectorAll('.song-pill').forEach((btn, idx) => {
+            btn.classList.toggle('active-song', idx === currentTrackIndex);
+        });
+    }
+    
+    function updateRotation() {
+        miniDisc.classList.toggle('rotating', isPlaying);
+        popupDisc.classList.toggle('rotating', isPlaying);
+    }
+    
+    function togglePlayPause() {
+        if (isPlaying) {
+            audio.pause();
+            isPlaying = false;
+            popupPlayPause.innerHTML = '▶';
+        } else {
+            audio.play().then(() => {
+                isPlaying = true;
+                popupPlayPause.innerHTML = '⏸';
+            }).catch(() => {
+                alert("🎵 请先点击页面任意位置，再尝试播放");
+            });
+        }
+        updateRotation();
+    }
+    
+    function nextTrack() {
+        currentTrackIndex = (currentTrackIndex + 1) % PLAYLIST.length;
+        loadTrack(currentTrackIndex);
+    }
+    
+    function prevTrack() {
+        currentTrackIndex = (currentTrackIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
+        loadTrack(currentTrackIndex);
+    }
+    
+    function buildPlaylistButtons() {
+        playlistContainer.innerHTML = '';
+        PLAYLIST.forEach((track, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'song-pill';
+            btn.textContent = track.name;
+            btn.addEventListener('click', () => {
+                currentTrackIndex = idx;
+                loadTrack(idx);
+            });
+            playlistContainer.appendChild(btn);
+        });
+    }
+    
+    popupVolume.addEventListener('input', (e) => {
+        currentVolume = e.target.value;
+        audio.volume = currentVolume;
+    });
+    
+    audio.addEventListener('ended', nextTrack);
+    
+    miniPlayer.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = musicPanel.style.display === 'flex';
+        if(isVisible){
+            musicPanel.style.display = 'none';
+            musicPanel.classList.remove('open');
+        }else{
+            musicPanel.style.display = 'flex';
+            musicPanel.classList.add('open');
+            buildPlaylistButtons();
+            updateUI();
+            updateRotation();
+        }
+    });
+    
+    closePanelBtn.addEventListener('click', () => {
+        musicPanel.style.display = 'none';
+        musicPanel.classList.remove('open');
+    });
+    
+    document.addEventListener('click', (e) => {
+        if (!musicPanel.contains(e.target) && !miniPlayer.contains(e.target)) {
+            musicPanel.style.display = 'none';
+            musicPanel.classList.remove('open');
+        }
+    });
+    
+    popupPlayPause.addEventListener('click', togglePlayPause);
+    popupPrev.addEventListener('click', prevTrack);
+    popupNext.addEventListener('click', nextTrack);
+    loadTrack(0);
+    
+    // ---------- 【工具箱优化动画】全局定时器变量 ----------
+    const toolPanelDiv = document.getElementById('toolPanel');
+    const toolPanelTitle = document.getElementById('panelTitle');
+    const toolPanelContent = document.getElementById('panelContent');
+    const closeTool = document.getElementById('closePanelBtn');
+    let globalTimer = null;
+
+    // 关闭面板淡出动画
+    closeTool.onclick = () => {
+        clearInterval(globalTimer);
+        globalTimer = null;
+        gsap.to(toolPanelDiv,{opacity:0,scale:0.92,duration:POP_DUR,onComplete:()=>{
+            toolPanelDiv.style.display = 'none';
+            toolPanelDiv.style.opacity=1;
+            toolPanelDiv.style.scale=1;
+        }});
+    }
+
+    function showTool(tool) {
+        clearInterval(globalTimer);
+        globalTimer = null;
+        toolPanelDiv.style.display = 'block';
+        // 面板弹出弹性动画
+        gsap.from(toolPanelDiv,{opacity:0,scale:0.92,y:15,duration:POP_DUR,ease:"back.out(1.2)"});
+        
+        //1.番茄
+        if (tool === 'tomato') {
+            toolPanelTitle.innerText = '🍅 番茄专注时钟';
+            const saveKey = 'tomato_save';
+            let saveData = JSON.parse(localStorage.getItem(saveKey)) || {sec: 1500,mode: "工作25min",run: false};
+            let { sec, mode, run } = saveData;
+            const modeList = [
+                { name: "工作25min", val: 1500, color: "#ff6b6b" },
+                { name: "短休5min", val: 300, color: "#52c41a" },
+                { name: "长休15min", val: 900, color: "#6c5ce7" }
+            ]
+            toolPanelContent.innerHTML = `
+                <div class="tool-desc">切换模式，自动存储剩余时间，退出页面不丢失进度</div>
+                <div class="tool-row" id="modeBox">
+                    ${modeList.map((m, i) => `<span class="tag ${mode === m.name ? 'active' : ''}" data-sec="${m.val}" data-name="${m.name}">${m.name}</span>`).join('')}
+                </div>
+                <div style="text-align:center;margin:20px 0;">
+                    <div id="timerDisplay" style="font-size:3rem;margin:1rem 0;">25:00</div>
+                </div>
+                <div class="tool-row">
+                    <button id="tomatoStartBtn" class="btn btn-primary">开始专注</button>
+                    <button id="tomatoPauseBtn" class="btn btn-outline">暂停</button>
+                    <button id="tomatoResetBtn" class="btn btn-outline">重置</button>
+                </div>
+            `;
+            const disp = document.getElementById('timerDisplay');
+            const start = document.getElementById('tomatoStartBtn');
+            const pause = document.getElementById('tomatoPauseBtn');
+            const reset = document.getElementById('tomatoResetBtn');
+            const modeBox = document.getElementById('modeBox');
+
+            //【内部元素分批渐入动画】
+            const childs = toolPanelContent.querySelectorAll('.tool-desc,#modeBox,#timerDisplay,.tool-row');
+            gsap.from(childs,{opacity:0,y:18,stagger:INNER_STAGGER,...GSAP_BASE});
+
+            function render() {
+                const min = String(Math.floor(sec / 60)).padStart(2, '0');
+                const s = String(sec % 60).padStart(2, '0');
+                disp.textContent = `${min}:${s}`;
+                const cur = modeList.find(x => x.name === mode);
+                disp.style.color = cur.color;
+                localStorage.setItem(saveKey, JSON.stringify({ sec, mode, run }));
+            }
+            render();
+
+            modeBox.querySelectorAll('.tag').forEach(tag => {
+                tag.onclick = () => {
+                    clearInterval(globalTimer);
+                    globalTimer = null;
+                    run = false;
+                    sec = Number(tag.dataset.sec);
+                    mode = tag.dataset.name;
+                    modeBox.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    render();
+                }
+            })
+
+            start.onclick = () => {
+                if (run === true) return;
+                run = true;
+                globalTimer = setInterval(() => {
+                    sec--;
+                    render();
+                    if (sec <= 0) {
+                        clearInterval(globalTimer);
+                        globalTimer = null;
+                        run = false;
+                        alert(`✅${mode}结束！切换休息模式吧`);
+                    }
+                }, 1000)
+            }
+            pause.onclick = () => {
+                run = false;
+                clearInterval(globalTimer);
+                globalTimer = null;
+                render();
+            }
+            reset.onclick = () => {
+                clearInterval(globalTimer);
+                globalTimer = null;
+                run = false;
+                const cur = modeList.find(x => x.name === mode);
+                sec = cur.val;
+                render();
+            }
+        }
+        
+        //2.速记
+        if(tool==='memo'){
+            toolPanelTitle.innerText='📋 灵感速记板';
+            const saveKey='note_data';
+            let data=JSON.parse(localStorage.getItem(saveKey))||{tag:"日常",text:""};
+            const tagList=['日常','工作','灵感','随笔'];
+            toolPanelContent.innerHTML=`
+                <div class="tool-desc">自动本地保存，支持导出txt，切换笔记分类</div>
+                <div class="tool-row" id="tagWrap">
+                    ${tagList.map(t=>`<span class="tag ${data.tag===t?'active':''}" data-t="${t}">${t}</span>`).join('')}
+                </div>
+                <textarea id="memoTextarea" rows="5" style="width:100%; background:#0f1219; border-radius:20px; padding:1rem;">${data.text}</textarea>
+                <div class="tool-row">
+                    <span id="wordCount" style="color:#aaa;">字数：${data.text.length}</span>
+                    <button id="exportNote" class="btn btn-outline">导出TXT</button>
+                    <button id="clearMemo" class="btn btn-outline">清空内容</button>
+                </div>
+            `
+            const ta=document.getElementById('memoTextarea');
+            const wc=document.getElementById('wordCount');
+            const exp=document.getElementById('exportNote');
+            const clr=document.getElementById('clearMemo');
+            const tagWrap=document.getElementById('tagWrap');
+
+            //分批入场
+            const childs = toolPanelContent.querySelectorAll('.tool-desc,#tagWrap,#memoTextarea,.tool-row');
+            gsap.from(childs,{opacity:0,y:18,stagger:INNER_STAGGER,...GSAP_BASE});
+
+            tagWrap.querySelectorAll('.tag').forEach(tag=>{
+                tag.onclick=()=>{
+                    data.tag=tag.dataset.t;
+                    tagWrap.querySelectorAll('.tag').forEach(t=>t.classList.remove('active'));
+                    tag.classList.add('active');
+                    localStorage.setItem(saveKey,JSON.stringify(data));
+                }
+            })
+            ta.oninput=()=>{
+                data.text=ta.value;
+                wc.textContent=`字数：${ta.value.length}`;
+                localStorage.setItem(saveKey,JSON.stringify(data));
+            }
+            exp.onclick=()=>{
+                const blob=new Blob([data.text],{type:"text/plain"});
+                const a=document.createElement('a');
+                a.href=URL.createObjectURL(blob);
+                a.download=`${data.tag}_笔记.txt`;
+                a.click();
+            }
+            clr.onclick=()=>{
+                if(confirm('确定清空当前笔记？无法撤回')){
+                    ta.value='';data.text='';wc.textContent='字数：0';
+                    localStorage.setItem(saveKey,JSON.stringify(data));
+                }
+            }
+        }
+        
+        //3.文字特效
+        if(tool==='textfx'){
+            toolPanelTitle.innerText='✨ 文字特效工厂';
+            toolPanelContent.innerHTML=`
+                <div class="tool-desc">输入文字，一键切换5种动画特效，实时预览</div>
+                <div class="tool-row">
+                    <input id="fxInput" value="创意无限，逐字动画" style="flex:1;background:#0f1219; border-radius:40px; padding:0.5rem;">
+                    <div>字号：<input type="range" id="sizeSlider" min="16" max="48" value="32"></div>
+                </div>
+                <div id="fxOutput" style="font-size:32px; margin:1.5rem 0;min-height:60px;">创意无限，逐字动画</div>
+                <div class="tool-row">
+                    <button class="btn btn-outline fx-btn" data-fx="wave">波浪弹性</button>
+                    <button class="btn btn-outline fx-btn" data-fx="glitch">故障抖动</button>
+                    <button class="btn btn-outline fx-btn" data-fx="light">流光渐变</button>
+                    <button class="btn btn-outline fx-btn" data-fx="type">打字机</button>
+                    <button class="btn btn-outline fx-btn" data-fx="shake">高频震动</button>
+                </div>
+            `
+            const inp=document.getElementById('fxInput');
+            const out=document.getElementById('fxOutput');
+            const size=document.getElementById('sizeSlider');
+            const btns=document.querySelectorAll('.fx-btn');
+            let typeTimer=null;
+
+            //分批入场
+            const childs = toolPanelContent.querySelectorAll('.tool-desc,.tool-row,#fxOutput');
+            gsap.from(childs,{opacity:0,y:18,stagger:INNER_STAGGER,...GSAP_BASE});
+
+            const refresh=()=>{
+                clearTimeout(typeTimer);
+                out.innerText=inp.value||'✨';
+                out.style.background='transparent';
+                out.style.WebkitBackgroundClip='unset';
+                out.style.color='#fff';
+            }
+            inp.oninput=refresh;
+            size.oninput=()=>out.style.fontSize=size.value+'px';
+
+            btns.forEach(b=>{
+                b.onclick=()=>{
+                    refresh();
+                    const fx=b.dataset.fx;
+                    switch(fx){
+                        case 'wave':gsap.fromTo(out, {scale:1}, {...GSAP_BASE, scale:1.3, yoyo:true, repeat:3});break;
+                        case 'glitch':gsap.to(out, {...GSAP_BASE,x:4, repeat:12, yoyo:true,duration:0.05});break;
+                        case 'light':out.style.background='linear-gradient(90deg,#ff6b6b,#ffb347,#6c5ce7,#ff6b6b)';out.style.backgroundSize='300% auto';out.style.WebkitBackgroundClip='text';out.style.color='transparent';gsap.to(out,{backgroundPosition:"300% center",duration:2.5,repeat:-1,ease:"linear"});break;
+                        case 'shake':gsap.to(out,{...GSAP_BASE,x:[-3,3,-3,3],repeat:18,duration:0.06});break;
+                        case 'type':
+                            const str=inp.value;let i=0;out.textContent='';
+                            typeTimer=setInterval(()=>{
+                                out.textContent+=str[i++];
+                                if(i>=str.length)clearInterval(typeTimer);
+                            },80);
+                            break;
+                    }
+                }
+            })
+        }
+        
+        //4.翻牌
+        if(tool==='game'){
+            toolPanelTitle.innerText='🎮 进阶记忆翻牌｜6组配对';
+            toolPanelContent.innerHTML=`
+                <div class="tool-desc">翻开两张相同图标即可配对消除，全部配对通关</div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                    <span>已配对：<span id="matchCnt">0</span>/6</span>
+                    <span>翻牌步数：<span id="stepCnt">0</span></span>
+                </div>
+                <div id="gameBoardSimple" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:1rem;"></div>
+                <button id="resetGameBtn" class="btn btn-outline" style="margin-top:1rem;">重新洗牌开局</button>
+            `;
+            const icons = ['🐱','🐶','🐭','🐹','🦊','🐼','🐱','🐶','🐭','🐹','🦊','🐼'];
+            let cards = icons.map((ic,i)=>({id:i, icon:ic, flipped:false, matched:false}));
+            let lock=false, first=null,step=0,match=0;
+            const board = document.getElementById('gameBoardSimple');
+            const stepDom=document.getElementById('stepCnt');
+            const matchDom=document.getElementById('matchCnt');
+
+            //内容依次入场
+            const childs = toolPanelContent.querySelectorAll('.tool-desc,div:not(#gameBoardSimple),#gameBoardSimple,#resetGameBtn');
+            gsap.from(childs,{opacity:0,y:18,stagger:INNER_STAGGER,...GSAP_BASE,onComplete:()=>renderGame()});
+
+            function renderGame() {
+                board.innerHTML='';
+                stepDom.textContent=step;
+                matchDom.textContent=match;
+                cards.forEach((c,idx)=>{
+                    const div=document.createElement('div');
+                    div.style.cssText='background:#1a1e26; border-radius:16px; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:1.6rem; cursor:pointer;transition:0.22s';
+                    div.style.background=c.flipped||c.matched?'rgba(255,107,107,0.4)':'#1a1e26';
+                    div.innerText=(c.flipped||c.matched)?c.icon:'?';
+                    //卡片生成自带弹出动画
+                    gsap.from(div,{scale:0,opacity:0,duration:0.3,ease:"back.out",delay:idx*0.035});
+                    div.onclick=()=>{
+                        if(lock||c.matched||c.flipped) return;
+                        c.flipped=true;
+                        step++;
+                        stepDom.textContent=step;
+                        renderGame();
+                        if(!first){
+                            first=c;
+                        } else {
+                            lock=true;
+                            if(first.icon===c.icon){
+                                first.matched=true;
+                                c.matched=true;
+                                match++;
+                                matchDom.textContent=match;
+                                first=null;
+                                lock=false;
+                                if(match===6) setTimeout(()=>alert(`🎉恭喜通关！总步数：${step}`),300);
+                            } else {
+                                setTimeout(()=>{
+                                    first.flipped=false;
+                                    c.flipped=false;
+                                    first=null;
+                                    lock=false;
+                                    renderGame();
+                                },700);
+                            }
+                        }
+                    };
+                    board.appendChild(div);
+                });
+            }
+            document.getElementById('resetGameBtn').onclick=()=>{
+                cards=icons.map((ic,i)=>({id:i, icon:ic, flipped:false, matched:false}));
+                first=null;
+                lock=false;
+                step=0;
+                match=0;
+                renderGame();
+            }
+        }
+    }
+
+    document.querySelectorAll('.tool-launcher').forEach(el => {
+        el.addEventListener('click', () => showTool(el.dataset.tool));
+    });
+    
+    // ---------- 导航滚动 ----------
+    document.querySelectorAll('[data-target]').forEach(link => {
+        link.addEventListener('click', () => {
+            const id = link.dataset.target;
+            const el = document.getElementById(id);
+            const navHeight = document.querySelector('.navbar').offsetHeight;
+            window.scrollTo({
+                top: el.offsetTop - navHeight - 20,
+                behavior: 'smooth'
+            });
+        });
+    });
+    
+    // ---------- 统一全局入场GSAP动画 ----------
+    gsap.registerPlugin(ScrollTrigger);
+    
+    gsap.from(".navbar", { y: -60, opacity: 0, ...GSAP_BASE });
+    gsap.from(".badge", { x: -30, opacity: 0, ...GSAP_BASE,delay:0.1 });
+    gsap.from(".hero h1", { opacity: 0, y: 40, ...GSAP_BASE,delay:0.2 });
+    gsap.from(".avatar-box", { scale: 0, rotation: 180, ...GSAP_BASE,ease:"back.out" });
+    
+    gsap.from(".work-item", {
+        scrollTrigger: "#work",
+        opacity: 0, y: 40, stagger:STAGGER_NUM, ...GSAP_BASE
+    });
+    
+    //====【工具箱滚动入场优化】====
+    gsap.from(".tool-launcher", {
+        scrollTrigger: {
+            trigger:"#tools",
+            start:"top 80%"
+        },
+        opacity: 0, y: 50, stagger:STAGGER_NUM, ...GSAP_BASE,ease:"power2.out"
+    });
+
+    gsap.from(".skill-card", {
+        scrollTrigger: "#work",
+        opacity:0,y:40,stagger:STAGGER_NUM,...GSAP_BASE
+    });
+    gsap.from(".contact-form",{
+        scrollTrigger:"#contact",
+        opacity:0,y:40,...GSAP_BASE
+    });
+    
+    // 自定义光标
+    const cursor = document.querySelector('.custom-cursor');
+    document.addEventListener('mousemove', (e) => {
+        gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.12,ease:"none" });
+    });
+    
+    document.querySelectorAll('a, button, .tool-launcher, .work-item, .tag, .song-pill,.skill-card').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('active'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
+    });
+    
+    document.querySelector('.contact-form .btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('✨ 感谢你的创意想法，我会尽快回复！');
+    });
+</script>
+</body>
+</html>
